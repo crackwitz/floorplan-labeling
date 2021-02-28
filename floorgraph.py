@@ -28,8 +28,13 @@ def draw_map(title="map"):
 		mask = (labels == label)
 
 		# 0 = blank, then corridor labels, then room labels
-		color = np.array([1.0, 0.5, 0.0]) if label <= numcorridors else np.array([0.0, 0.5, 1.0])
-		canvas[mask] = color * label / numlabels
+		labeltype = 0 if (1 <= label <= numcorridors) else 1
+
+		color = np.array([[1.0, 0.5, 0.0], [0.0, 0.5, 1.0]])[labeltype]
+
+		rellabel = [label, label - numcorridors][labeltype]
+		relrange = [numcorridors, numrooms][labeltype]
+		canvas[mask] = color * (0.1 + 0.9 * rellabel / relrange)
 
 		# calculate centroid from moments
 		m = cv.moments(mask.astype(np.uint8))
